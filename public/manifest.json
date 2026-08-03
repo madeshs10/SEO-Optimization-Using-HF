@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "AI SEO Assistant — HF Edition",
+  "version": "2.0.0",
+  "description": "Generate optimized SEO metadata for news articles using HuggingFace open-source AI models.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "AI SEO Assistant — HF Edition"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost/*", "http://127.0.0.1/*", "file://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

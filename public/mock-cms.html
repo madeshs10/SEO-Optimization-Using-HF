@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Newsroom CMS — Editorial Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --indigo: #6366f1;
+      --indigo-light: #e0e7ff;
+      --indigo-dark: #4338ca;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --danger: #ef4444;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .cms-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .cms-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+
+    .cms-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--indigo), #d946ef);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 0.875rem;
+    }
+
+    .cms-brand-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .cms-brand-name span { color: var(--indigo); }
+
+    .cms-header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: 9999px;
+      padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, var(--indigo), #d946ef);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+
+    /* Article Selector Bar */
+    .article-selector-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .article-selector-bar label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      white-space: nowrap;
+    }
+
+    .article-selector-bar select {
+      border: 1px solid var(--gray-300);
+      border-radius: 0.375rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--gray-800);
+      flex: 1;
+      max-width: 400px;
+      cursor: pointer;
+    }
+
+    /* SEO Score Bar */
+    .seo-score-bar {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 0.625rem;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .seo-score-bar .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+
+    .seo-score-bar .score-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+
+    .seo-score-bar .score-value {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .score-track {
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease, background 0.3s ease;
+    }
+
+    /* Main Layout */
+    .cms-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Cards */
+    .cms-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .cms-card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--gray-50);
+    }
+
+    .cms-card-header h2 {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--gray-700);
+    }
+
+    .cms-card-header .icon {
+      width: 22px;
+      height: 22px;
+      background: var(--indigo-light);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .cms-card-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Form Fields */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group label .char-counter {
+      font-weight: 400;
+      font-size: 0.72rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      border: 1px solid var(--gray-300);
+      border-radius: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-800);
+      background: var(--white);
+      width: 100%;
+      transition: all 0.15s ease;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group textarea.article-content {
+      min-height: 200px;
+    }
+
+    .over-limit {
+      border-color: var(--danger) !important;
+    }
+
+    .char-counter.ok { color: var(--gray-400); }
+    .char-counter.warn { color: var(--amber); }
+    .char-counter.over { color: var(--danger); font-weight: 700; }
+
+    /* Buttons */
+    .btn-save {
+      background: var(--indigo);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-save:hover { background: var(--indigo-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+    .btn-save:active { transform: none; }
+
+    /* Toast */
+    .cms-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--gray-800);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      z-index: 9999;
+      animation: slideUp 0.3s ease;
+      border-left: 3px solid var(--emerald);
+    }
+
+    .cms-toast.visible { display: flex; }
+
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Hidden field */
+    #cms-article-id { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden CMS article ID (required by content script) -->
+  <input type="hidden" id="cms-article-id" value="ART-001" />
+
+  <!-- Header -->
+  <header class="cms-header">
+    <div class="cms-brand">
+      <div class="cms-logo">GN</div>
+      <div class="cms-brand-name">Global <span>Newsroom</span> CMS</div>
+    </div>
+    <div class="cms-header-right">
+      <div class="user-badge">
+        <div class="user-avatar">EA</div>
+        Editor Admin
+      </div>
+    </div>
+  </header>
+
+  <!-- Article Selector -->
+  <div class="article-selector-bar">
+    <label for="article-switcher">Article:</label>
+    <select id="article-switcher">
+      <option value="0">ART-001 — The Rise of Generative AI in Local Journalism</option>
+      <option value="1">ART-002 — Global Leaders Gather for Historic Climate Policy Summit</option>
+      <option value="2">ART-003 — Space Economy Poised for $1 Trillion Decade</option>
+      <option value="3">ART-004 — தமிழ்: செயற்கை நுண்ணறிவின் வளர்ச்சி (Local Journalism AI)</option>
+      <option value="4">ART-005 — தமிழ்: சுற்றுச்சூழல் நட்பு மின்சார வாகனங்கள் (Tamil EV Investments)</option>
+      <option value="5">ART-006 — தமிழ்: இஸ்ரோவின் ககன்யான் விண்வெளி சாதனை (ISRO Space Mission)</option>
+    </select>
+  </div>
+
+  <!-- Main Content -->
+  <main class="cms-main">
+    <!-- LEFT: Article Details -->
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <div class="icon">📝</div>
+        <h2>Article Details</h2>
+      </div>
+      <div class="cms-card-body">
+        <div class="form-group">
+          <label>Article Title</label>
+          <input type="text" id="cms-article-title" value="The Rise of Generative AI in Local Journalism" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="cms-article-category">
+            <option value="Technology" selected>Technology</option>
+            <option value="Business">Business</option>
+            <option value="Politics">Politics</option>
+            <option value="Health">Health</option>
+            <option value="Sports">Sports</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Science">Science</option>
+            <option value="General News">General News</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Article Content</label>
+          <textarea id="cms-article-content" class="article-content">Local newsrooms across the country are beginning to experiment with generative AI tools to augment their reporting capabilities. From automated summaries of city council meetings to AI-assisted fact-checking pipelines, the technology is reshaping how smaller publications manage their editorial workflow. While large outlets have had access to expensive AI solutions for years, the democratization of open-source models like Mistral and LLaMA is enabling community newspapers and regional broadcasters to level the playing field. Journalists report mixed feelings — some see AI as a tool that frees them for deeper investigation, while others worry about job displacement and the erosion of the human voice in storytelling.</textarea>
+        </div>
+        <button class="btn-save" onclick="saveDraft()">
+          💾 Save Draft
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: SEO Metadata -->
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <div class="icon">🔍</div>
+        <h2>SEO Metadata</h2>
+      </div>
+      <div class="cms-card-body">
+
+        <!-- SEO Score Bar -->
+        <div class="seo-score-bar">
+          <div class="score-row">
+            <span class="score-label">SEO Score</span>
+            <span class="score-value" id="seo-score-display" style="color: var(--amber);">28/100</span>
+          </div>
+          <div class="score-track">
+            <div class="score-fill" id="seo-score-fill" style="width: 28%; background: var(--amber);"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            Meta Title
+            <span class="char-counter ok" id="meta-title-counter">19/60</span>
+          </label>
+          <input type="text" id="cms-meta-title" value="AI in Journalism 2024" maxlength="80" placeholder="50-60 chars recommended" />
+        </div>
+
+        <div class="form-group">
+          <label>
+            Meta Description
+            <span class="char-counter ok" id="meta-desc-counter">26/160</span>
+          </label>
+          <textarea id="cms-meta-description" rows="3" maxlength="200" placeholder="150-160 chars recommended">AI is changing local news.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label>URL Slug</label>
+          <input type="text" id="cms-seo-slug" value="ai-journalism" placeholder="lowercase-with-hyphens" />
+        </div>
+
+        <div class="form-group">
+          <label>Focus Keyword</label>
+          <input type="text" id="cms-focus-keyword" value="generative AI journalism" placeholder="primary keyword phrase" />
+        </div>
+
+        <div class="form-group">
+          <label>Related Keywords</label>
+          <input type="text" id="cms-related-keywords" value="AI news, newsroom technology" placeholder="keyword1, keyword2, ..." />
+        </div>
+
+        <div class="form-group">
+          <label>Image Alt Text</label>
+          <input type="text" id="cms-image-alt" value="Journalist using AI tools" placeholder="Describe the image for SEO" />
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="cms-toast" id="cms-toast">
+    ✅ SEO metadata updated by AI SEO Assistant!
+  </div>
+
+  <script>
+    // ----- Article data -----
+    const articles = [
+      {
+        id: 'ART-001',
+        title: 'The Rise of Generative AI in Local Journalism',
+        content: 'Local newsrooms across the country are beginning to experiment with generative AI tools to augment their reporting capabilities. From automated summaries of city council meetings to AI-assisted fact-checking pipelines, the technology is reshaping how smaller publications manage their editorial workflow. While large outlets have had access to expensive AI solutions for years, the democratization of open-source models like Mistral and LLaMA is enabling community newspapers and regional broadcasters to level the playing field. Journalists report mixed feelings — some see AI as a tool that frees them for deeper investigation, while others worry about job displacement and the erosion of the human voice in storytelling.',
+        category: 'Technology',
+        metaTitle: 'AI in Journalism 2024',
+        metaDesc: 'AI is changing local news.',
+        slug: 'ai-journalism',
+        focusKeyword: 'generative AI journalism',
+        relatedKeywords: 'AI news, newsroom technology',
+        imageAlt: 'Journalist using AI tools',
+      },
+      {
+        id: 'ART-002',
+        title: 'Global Leaders Gather for Historic Climate Policy Summit',
+        content: 'More than 190 nations sent delegations to the 2024 Global Climate Policy Summit, where a landmark agreement on carbon pricing and renewable energy subsidies was signed. The summit, held in Geneva, culminated in a binding commitment to reduce global emissions by 45% by 2035. Developing nations negotiated a $400 billion climate transition fund as part of the deal. Environmental groups praised the agreement but noted that enforcement mechanisms remain vague. Industry leaders warned of economic disruption without clearer implementation timelines. The agreement is considered the most significant climate accord since the Paris Agreement.',
+        category: 'Politics',
+        metaTitle: 'Climate Summit 2024 Agreement',
+        metaDesc: 'World leaders sign historic climate deal.',
+        slug: 'climate-summit-2024',
+        focusKeyword: 'climate policy summit 2024',
+        relatedKeywords: 'climate change, carbon pricing, renewable energy',
+        imageAlt: 'World leaders at climate summit',
+      },
+      {
+        id: 'ART-003',
+        title: 'Space Economy Poised for $1 Trillion Decade',
+        content: 'The global space economy is on track to surpass $1 trillion in annual revenue by 2034, according to a new report from the Space Foundation. Driven by a surge in satellite broadband constellations, lunar mission contracts, and in-orbit manufacturing projects, the sector is attracting unprecedented private investment. SpaceX, Blue Origin, and a dozen emerging launch providers are competing for government and commercial contracts. Meanwhile, asteroid mining ventures have begun pre-operational feasibility studies. Analysts note that regulatory frameworks are struggling to keep pace with the speed of commercial space development, raising concerns about orbital debris and spectrum crowding.',
+        category: 'Science',
+        metaTitle: 'Space Economy 2034 Outlook',
+        metaDesc: 'Space industry to reach $1 trillion.',
+        slug: 'space-economy-trillion',
+        focusKeyword: 'space economy 2034',
+        relatedKeywords: 'space industry, satellite, lunar missions, SpaceX',
+        imageAlt: 'Rocket launching into space',
+      },
+      {
+        id: 'ART-004',
+        title: 'செயற்கை நுண்ணறிவின் வளர்ச்சி: உள்ளூர் பத்திரிகைகளில் புதிய புரட்சி',
+        content: 'தமிழகம் மற்றும் இந்திய அளவிலான உள்ளூர் செய்தி நிறுவனங்கள் செய்தி சேகரிப்பு மற்றும் கட்டுரைத் தொகுப்பில் செயற்கை நுண்ணறிவு (AI) தொழில்நுட்பத்தைப் பயன்படுத்தத் தொடங்கியுள்ளன. நகராட்சி மற்றும் உள்ளூர் பஞ்சாயத்து கூட்டங்களின் முக்கிய விவாதங்களைச் சுருக்கமாக எழுதுவது முதல், செய்திகளின் உண்மைத் தன்மையைச் சரிபார்ப்பது வரை AI கருவி பெருமளவில் உதவுகிறது. மிஸ்ட்ரல் மற்றும் எல்எல்ஏஎம்ஏ போன்ற திறந்த மூல மாதிரிகளின் வரவால், சிறிய செய்தி நிறுவனங்களும் பெரிய நிறுவனங்களுக்கு இணையாகத் துரிதமாகச் செயல்பட முடிகிறது. இருப்பினும், நிருபர்களின் வேலைவாய்ப்பு மற்றும் மனிதக் குரலின் உயிரோட்டம் குறித்தும் கருத்து வேறுபாடுகள் நிலவுகின்றன.',
+        category: 'Technology',
+        metaTitle: 'செயற்கை நுண்ணறிவு 2024',
+        metaDesc: 'செயற்கை நுண்ணறிவு உள்ளூர் செய்திகளை மாற்றுகிறது.',
+        slug: 'ai-tamil-journalism',
+        focusKeyword: 'செயற்கை நுண்ணறிவு பத்திரிகை',
+        relatedKeywords: 'தமிழ் AI செய்திகள், செய்தித் துறை தொழில்நுட்பம்',
+        imageAlt: 'செயற்கை நுண்ணறிவு கருவியைப் பயன்படுத்தும் நிருபர்',
+      },
+      {
+        id: 'ART-005',
+        title: 'சுற்றுச்சூழல் நட்பு மின்சார வாகனங்கள்: தமிழகத்தில் புதிய முதலீடுகள்',
+        content: 'தமிழகத்தில் மின்சார வாகனங்கள் (EV) மற்றும் பேட்டரி உற்பத்தித் துறையில் பெரும் முதலீடுகள் குவிந்து வருகின்றன. ஓசூர், கோவை மற்றும் சென்னை ஆகிய தொழிற்பேட்டை மண்டலங்களில் புதிய மின்சார வாகன உற்பத்தி ஆலைகள் அமைக்கப்பட்டு வருகின்றன. அரசு வழங்கும் மானியங்கள் மற்றும் புதிய மின்சார வாகனக் கொள்கை 2024 இதற்கு பெரும் தூண்டுகோலாக அமைந்துள்ளது. இதன் மூலம் பல்லாயிரக்கணக்கான இளைஞர்களுக்குப் புதிய வேலைவாய்ப்புகள் உருவாகும் என எதிர்பார்க்கப்படுகிறது.',
+        category: 'Business',
+        metaTitle: 'தமிழகத்தில் EV வாகன முதலீடுகள் 2024',
+        metaDesc: 'தமிழகத்தில் மின்சார வாகன உற்பத்தி ஆலைகள் மற்றும் புதிய வேலைவாய்ப்புகள் பெருக்கம்.',
+        slug: 'tamil-nadu-ev-investments-2024',
+        focusKeyword: 'மின்சார வாகனங்கள் முதலீடு',
+        relatedKeywords: 'தமிழக EV கொள்கை, ஓசூர் தொழில்துறை, பேட்டரி உற்பத்தி',
+        imageAlt: 'மின்சார வாகன உற்பத்தி ஆலை',
+      },
+      {
+        id: 'ART-006',
+        title: 'இஸ்ரோவின் அடுத்த மைல்கல்: நிலவு மற்றும் விண்வெளி ஆராய்ச்சி சாதனைகள்',
+        content: 'இந்திய விண்வெளி ஆராய்ச்சி நிறுவனம் (ISRO) சந்திரயான் திட்டத்தின் வெற்றியைத் தொடர்ந்து, ககன்யான் மனித விண்வெளிப் பயணத் திட்டத்தை துரிதப்படுத்தி வருகிறது. ஸ்ரீஹரிகோட்டா விண்வெளி மையத்திலிருந்து புதிய ராகெட்டுகள் மற்றும் செயற்கைக்கோள்கள் வெற்றிகரமாக விண்ணில் செலுத்தப்பட்டு வருகின்றன. விண்வெளித் துறையில் தனியார் நிறுவனங்களின் பங்களிப்பும் அதிகரித்து வருவதால், இந்தியாவின் விண்வெளிப் பொருளாதாரம் புதிய உச்சத்தை எட்டி வருகிறது.',
+        category: 'Science',
+        metaTitle: 'இஸ்ரோ ககன்யான் விண்வெளி திட்டம்',
+        metaDesc: 'இஸ்ரோவின் ககன்யான் மனித விண்வெளி பயணம் மற்றும் புதிய சாதனைகள்.',
+        slug: 'isro-gaganyaan-space-mission-achievements',
+        focusKeyword: 'இஸ்ரோ விண்வெளி சாதனை',
+        relatedKeywords: 'ககன்யான் திட்டம், ஸ்ரீஹரிகோட்டா, சந்திரயான், ISRO தமிழ்',
+        imageAlt: 'இஸ்ரோ ராக்கெட் ஏவுதளம்',
+      },
+    ];
+
+    let currentArticle = 0;
+
+    function loadArticle(idx) {
+      const a = articles[idx];
+      document.getElementById('cms-article-id').value = a.id;
+      document.getElementById('cms-article-title').value = a.title;
+      document.getElementById('cms-article-content').value = a.content;
+      document.getElementById('cms-article-category').value = a.category;
+      document.getElementById('cms-meta-title').value = a.metaTitle;
+      document.getElementById('cms-meta-description').value = a.metaDesc;
+      document.getElementById('cms-seo-slug').value = a.slug;
+      document.getElementById('cms-focus-keyword').value = a.focusKeyword;
+      document.getElementById('cms-related-keywords').value = a.relatedKeywords;
+      document.getElementById('cms-image-alt').value = a.imageAlt;
+      updateCounters();
+      updateSEOScore();
+    }
+
+    document.getElementById('article-switcher').addEventListener('change', (e) => {
+      const idx = parseInt(e.target.value);
+      currentArticle = idx;
+      loadArticle(idx);
+      // Trigger change event on cms-article-id so content script detects switch
+      const idEl = document.getElementById('cms-article-id');
+      idEl.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    // ----- Char counters -----
+    function updateCounters() {
+      const mt = document.getElementById('cms-meta-title');
+      const md = document.getElementById('cms-meta-description');
+      const mtCounter = document.getElementById('meta-title-counter');
+      const mdCounter = document.getElementById('meta-desc-counter');
+
+      const mtLen = mt.value.length;
+      const mdLen = md.value.length;
+
+      mtCounter.textContent = `${mtLen}/60`;
+      mtCounter.className = 'char-counter ' + (mtLen > 60 ? 'over' : mtLen >= 50 ? 'ok' : 'warn');
+      mt.classList.toggle('over-limit', mtLen > 60);
+
+      mdCounter.textContent = `${mdLen}/160`;
+      mdCounter.className = 'char-counter ' + (mdLen > 160 ? 'over' : mdLen >= 150 ? 'ok' : 'warn');
+      md.classList.toggle('over-limit', mdLen > 160);
+    }
+
+    document.getElementById('cms-meta-title').addEventListener('input', () => { updateCounters(); updateSEOScore(); });
+    document.getElementById('cms-meta-description').addEventListener('input', () => { updateCounters(); updateSEOScore(); });
+    document.getElementById('cms-seo-slug').addEventListener('input', updateSEOScore);
+    document.getElementById('cms-focus-keyword').addEventListener('input', updateSEOScore);
+    document.getElementById('cms-related-keywords').addEventListener('input', updateSEOScore);
+    document.getElementById('cms-image-alt').addEventListener('input', updateSEOScore);
+
+    // ----- SEO Score -----
+    function isLegitContent(text) {
+      const trimmed = (text || '').trim();
+      if (!trimmed) return false;
+      if (/(.)\1{5,}/.test(trimmed)) return false;
+      const uniqueChars = new Set(trimmed.toLowerCase()).size;
+      if (trimmed.length > 20 && uniqueChars / trimmed.length < 0.15) return false;
+      const words = trimmed.split(/\s+/).filter(Boolean);
+      if (trimmed.length > 35 && words.length < 3) return false;
+      const maxWordLen = Math.max(...words.map(w => w.length), 0);
+      if (maxWordLen > 28) return false;
+      return true;
+    }
+
+    function updateSEOScore() {
+      const mt = document.getElementById('cms-meta-title').value;
+      const md = document.getElementById('cms-meta-description').value;
+      const slug = document.getElementById('cms-seo-slug').value;
+      const fk = document.getElementById('cms-focus-keyword').value.trim().toLowerCase();
+      const rk = document.getElementById('cms-related-keywords').value;
+      const alt = document.getElementById('cms-image-alt').value;
+
+      let score = 0;
+      const isTitleLegit = isLegitContent(mt);
+      const isDescLegit = isLegitContent(md);
+      const isSlugLegit = isLegitContent(slug);
+      const isAltLegit = isLegitContent(alt);
+
+      if (isTitleLegit) {
+        const tl = mt.length;
+        score += (tl >= 50 && tl <= 60) ? 25 : tl >= 30 ? 12 : 5;
+      }
+
+      if (isDescLegit) {
+        const dl = md.length;
+        score += (dl >= 150 && dl <= 160) ? 25 : dl >= 100 ? 12 : 5;
+      }
+
+      if (isSlugLegit) {
+        score += /^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug) ? 15 : 5;
+      }
+
+      if (fk && isLegitContent(fk)) {
+        if (isTitleLegit && mt.toLowerCase().includes(fk)) score += 5;
+        if (isDescLegit && md.toLowerCase().includes(fk)) score += 5;
+        if (isSlugLegit && slug.toLowerCase().includes(fk.replace(/\s+/g, '-'))) score += 5;
+      }
+
+      const kwList = rk.split(',').map(k => k.trim()).filter(k => isLegitContent(k));
+      score += Math.min(kwList.length * 2, 10);
+
+      if (isAltLegit) {
+        const al = alt.length;
+        score += (al >= 30 && al <= 125) ? 10 : 4;
+      }
+
+      score = Math.min(score, 100);
+
+      const color = score >= 80 ? '#10b981' : score >= 55 ? '#f59e0b' : '#ef4444';
+      document.getElementById('seo-score-display').textContent = `${score}/100`;
+      document.getElementById('seo-score-display').style.color = color;
+      document.getElementById('seo-score-fill').style.width = `${score}%`;
+      document.getElementById('seo-score-fill').style.background = color;
+    }
+
+    // ----- Toast for SEO_ASSISTANT_APPLIED -----
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'SEO_ASSISTANT_APPLIED') {
+        const toast = document.getElementById('cms-toast');
+        toast.classList.add('visible');
+        updateCounters();
+        updateSEOScore();
+        setTimeout(() => toast.classList.remove('visible'), 4000);
+      }
+    });
+
+    function saveDraft() {
+      const btn = document.querySelector('.btn-save');
+      btn.textContent = '✓ Draft Saved!';
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        btn.innerHTML = '💾 Save Draft';
+        btn.style.background = '';
+      }, 2000);
+    }
+
+    // Initial load
+    updateCounters();
+    updateSEOScore();
+  </script>
+</body>
+</html>
